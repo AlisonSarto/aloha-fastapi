@@ -1,3 +1,5 @@
+import os
+
 from fastapi import APIRouter, Header, HTTPException, status
 from sqlmodel import SQLModel
 
@@ -7,7 +9,7 @@ import controllers.sealing as sealing
 
 router = APIRouter()
 routes = router
-ADMIN_WIPE_KEY = "danger"
+ADMIN_WIPE_KEY = os.getenv("ADMIN_WIPE_KEY", "")
 
 
 @router.get("/")
@@ -33,5 +35,4 @@ def wipe_database(x_admin_key: str | None = Header(default=None, alias="X-Admin-
         session.commit()
 
     return {"status": "database wiped"}
-
 
