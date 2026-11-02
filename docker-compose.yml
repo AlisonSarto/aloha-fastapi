@@ -1,0 +1,22 @@
+services:
+  api:
+    image: aloha-fastapi-api:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-sqlite:////app/data/database.db}
+      ADMIN_WIPE_KEY: ${ADMIN_WIPE_KEY:?ADMIN_WIPE_KEY must be set}
+    ports:
+      - "${API_FORWARD_PORT:-8001}:8000"
+    volumes:
+      - aloha_fastapi_data:/app/data
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  aloha_fastapi_data:
